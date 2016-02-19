@@ -15,8 +15,12 @@ if (Meteor.isClient) {
       Meteor.call('createTask', e.target.newtask.value)
       e.target.newtask.value = null
     },
-    'blur input.todo-item': function(e) {
-      Meteor.call('updateTask', e.target.attributes['task-id'].value, e.target.value);
+    'keypress input.todo-item': function(e) {
+      if (e.keyCode == 13) {
+        let taskId = e.target.attributes['task-id'].value
+        Meteor.call('updateTask', taskId, e.target.value)
+        e.target.blur()        
+      }
     }
   })
 }
