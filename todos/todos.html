@@ -1,0 +1,29 @@
+<head>
+  <title>todos</title>
+</head>
+
+<body>
+  {{> todos}}
+</body>
+
+<template name="todos">
+  <h1>My TODOs</h1>
+  <form id="createTask">
+    <input type="textbox" name="newtask">
+  </form>
+  {{#each tasks}}
+  {{>todo_item}}
+  {{/each}}
+</template>
+
+<template name="todo_item">
+  <div>
+    <input type="checkbox" checked="{{checked}}" name="checked" />
+    <input type="textbox" value="{{name}}" class="todo-item" task-id="{{_id}}"/>
+  </div>
+</template>
+
+<template name="hello">
+  <button>Click Me</button>
+  <p>You've pressed the button {{counter}} times.</p>
+</template>
