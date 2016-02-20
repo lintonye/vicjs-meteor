@@ -27,39 +27,48 @@ var TodoItemCreate = React.createClass({
     }
 })
 
-var TodoItemList = React.createClass({
-    onTaskNameChange(event) {
-        let task_id = event.target.attributes["data-task-id"].value;
-        let task_name = event.target.value;
-        this.props.updateTaskName(task_id, task_name);
+var TodoItem = React.createClass({
+    getInitialState() {
+        return {}
     },
 
-    onTaskStatusChange(event) {
-        let task_id = event.target.attributes["data-task-id"].value;
-        let task_checked = event.target.checked;
-        this.props.updateTaskStatus(task_id, task_name);
+    saveUpdatedTask(name,checked) {
+        this.props.updateTask(this.props.task._id,name,checked);
+        this.setState(this.getInitialState());
     },
 
-    onTaskNameKeyPressed(event) {
-        if (event.keyCode == 13) {
-            let task_id = event.target.attributes["data-task-id"].value;
-            this.props.saveUpdatedTask(task_id);
+    handleChange(event){
+        if (event.target.type === 'checkbox') {
+            this.saveUpdatedTask(
+                this.state.taskName || this.props.task.name,
+                event.target.checked
+            );
+        }
+        else {
+            this.setState({taskName: event.target.value})
         }
     },
 
-    render() {
-        let todoItems = this.props.TodoItems.map( (todoItem) =>
-            <div key={todoItem._id}>
-                <input type="checkbox" data-task-id={todoItem._id} checked={todoItem.checked} onChange={this.onTaskStatusChange}/>
-                <input type="textbox" data-task-id={todoItem._id}
-                    className="todo-item"
-                    value={todoItem.name}
-                    onKeyPress={this.onTaskNameKeyPressed}
-                    onChange={this.onTaskNameChange}/>
-            </div>);
+    onTaskNameKeyPressed(event){
+        if (event.charCode === 13)
+            this.saveUpdatedTask(
+                this.state.taskName || this.props.task.name,
+                this.props.task.checked
+            );
+    },
 
+    render() {
         return (
-            <div>{todoItems}</div>
+            <div>
+                <input type="checkbox"
+                    checked={this.props.task.checked}
+                    onChange={this.handleChange}/>
+                <input type="textbox"
+                    className="todo-item"
+                    value={this.state.taskName || this.props.task.name}
+                    onKeyPress={this.onTaskNameKeyPressed}
+                    onChange={this.handleChange}/>
+            </div>
         )
     }
 })
@@ -70,7 +79,7 @@ var TodoApp = React.createClass({
     getMeteorData() {
         Meteor.subscribe('tasks');
         return {
-            TodoItems: Tasks.find().fetch()
+            Tasks: Tasks.find().fetch()
         }
     },
 
@@ -78,37 +87,21 @@ var TodoApp = React.createClass({
         Meteor.call('createTask', taskName);
     },
 
-    saveUpdatedTask(task_id) {
-        let task = Tasks.findOne({_id,task_id});
-        if (task) {
-            Meteor.call('updateTask', task_id, task.name, task.checked);
-        }
-    },
-
-    updateTaskName(task_id, task_name) {
-        Tasks.update({_id: task_id}, {$set:{name:task_name}});
-    },
-
-    updateTaskStatus(task_id, task_status) {
-        Tasks.update({_id: task_id}, {$set:{checked:task_status}});
+    updateTask(id, name, checked) {
+        Meteor.call('updateTask', id, name, checked);
     },
 
     render() {
+        let todoItems = this.data.Tasks.map( (task) => <TodoItem key={task._id} task={task} updateTask={this.updateTask}/>);
         return (
             <div>
                 <h1>My TODOs</h1>
                 <TodoItemCreate onCreateNewTask = {this.createNewTask}/>
-                <TodoItemList TodoItems = {this.data.TodoItems}
-                    updateTaskName = {this.updateTaskName}
-                    updateTaskStatus = {this.updateTaskStatus}
-                    saveUpdatedTask = {this.saveUpdatedTask}
-                />
+                {todoItems}
             </div>
         )
     }
 })
-
-
 
 Meteor.startup(function () {
     ReactDOM.render(<TodoApp />, document.getElementById("render-target"));
