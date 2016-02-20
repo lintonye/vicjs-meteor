@@ -40,6 +40,7 @@ var TodoItem = React.createClass({
         if (event.charCode === 13) {
             this.props.updateTask(this.props.task._id, this.state.taskName || this.props.task.name);
             this.setState(this.getInitialState());
+            event.target.blur();
         }
     },
 
