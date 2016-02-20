@@ -17,5 +17,6 @@ meteor add react
 5. Coding
    - add TodosApp
    - add TodoItemCreate
-   - add TodoItemList readOnly
-   - add in-place edit to TodoItemList
+   - add MeteorData
+   - add TodoItem
+   - add in-place edit to TodoItem
