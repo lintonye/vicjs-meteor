@@ -50,11 +50,13 @@ var TodoItem = React.createClass({
     },
 
     onTaskNameKeyPressed(event){
-        if (event.charCode === 13)
+        if (event.charCode === 13) {
             this.saveUpdatedTask(
                 this.state.taskName || this.props.task.name,
                 this.props.task.checked
             );
+            event.target.blur();
+        }
     },
 
     render() {
