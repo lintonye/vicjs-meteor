@@ -13,9 +13,9 @@ if (Meteor.isServer) {
       Tasks.insert({name: taskName, checked: false, timestamp: new Date().valueOf()})
     },
 
-    updateTask(id, taskName, checked) {
+    updateTask(id, taskName) {
       console.log(id, taskName);
-      Tasks.update({_id: id}, {$set: {name: taskName, checked}})
+      Tasks.update({_id: id}, {$set: {name: taskName}})
     }
   })
 }

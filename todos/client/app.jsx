@@ -32,37 +32,21 @@ var TodoItem = React.createClass({
         return {}
     },
 
-    saveUpdatedTask(name,checked) {
-        this.props.updateTask(this.props.task._id,name,checked);
-        this.setState(this.getInitialState());
-    },
-
     handleChange(event){
-        if (event.target.type === 'checkbox') {
-            this.saveUpdatedTask(
-                this.state.taskName || this.props.task.name,
-                event.target.checked
-            );
-        }
-        else {
-            this.setState({taskName: event.target.value})
-        }
+        this.setState({taskName: event.target.value})
     },
 
     onTaskNameKeyPressed(event){
-        if (event.charCode === 13)
-            this.saveUpdatedTask(
-                this.state.taskName || this.props.task.name,
-                this.props.task.checked
-            );
+        if (event.charCode === 13) {
+            this.props.updateTask(this.props.task._id, this.state.taskName || this.props.task.name);
+            this.setState(this.getInitialState());
+        }
     },
 
     render() {
         return (
             <div>
-                <input type="checkbox"
-                    checked={this.props.task.checked}
-                    onChange={this.handleChange}/>
+                <input type="checkbox"/>
                 <input type="textbox"
                     className="todo-item"
                     value={this.state.taskName || this.props.task.name}
@@ -87,8 +71,8 @@ var TodoApp = React.createClass({
         Meteor.call('createTask', taskName);
     },
 
-    updateTask(id, name, checked) {
-        Meteor.call('updateTask', id, name, checked);
+    updateTask(id, name) {
+        Meteor.call('updateTask', id, name);
     },
 
     render() {
